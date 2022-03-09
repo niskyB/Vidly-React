@@ -2,7 +2,7 @@ import React from "react";
 import Like from "./common/like";
 
 const MoviesTable = (props) => {
-  const { movies, onLike, onDelete } = props;
+  const { movies, onLike, onDelete, onSort } = props;
   if (movies.length === 0) return <h1>There are no movies in the database.</h1>;
   return (
     <React.Fragment>
@@ -10,10 +10,27 @@ const MoviesTable = (props) => {
       <table className="table">
         <thead>
           <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Stock</th>
-            <th>Rate</th>
+            <th style={{ cursor: "pointer" }} onClick={() => onSort("title")}>
+              Title
+            </th>
+            <th
+              style={{ cursor: "pointer" }}
+              onClick={() => onSort("genre.name")}
+            >
+              Genre
+            </th>
+            <th
+              style={{ cursor: "pointer" }}
+              onClick={() => onSort("numberInStock")}
+            >
+              Stock
+            </th>
+            <th
+              style={{ cursor: "pointer" }}
+              onClick={() => onSort("dailyRentalRate")}
+            >
+              Rate
+            </th>
             <th></th>
             <th></th>
           </tr>
