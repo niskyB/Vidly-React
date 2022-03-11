@@ -24,15 +24,14 @@ class Movies extends Component {
   render() {
     const { pageSize, currentPage, movies, genres, selectedItem, sortColumn } =
       this.state;
-    const filters =
-      selectedItem && selectedItem._id
-        ? movies.filter((item) => item.genre._id === selectedItem._id)
-        : movies;
+    const result = this.getPageData(
+      selectedItem,
+      movies,
+      sortColumn,
+      currentPage,
+      pageSize
+    );
 
-    const sorted = _.orderBy(filters, [sortColumn.path], [sortColumn.order]);
-    const items = paginate(sorted, currentPage, pageSize);
-
-    const count = sorted.length;
     return (
       <div className="row">
         <div className="col-3">
@@ -44,14 +43,14 @@ class Movies extends Component {
         </div>
         <div className="col">
           <MoviesTable
-            movies={items}
+            movies={result.items}
             sortColumn={sortColumn}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
             onSort={this.handleSort}
           />
           <Pagination
-            itemsCount={count}
+            itemsCount={result.count}
             pageSize={pageSize}
             currentPage={currentPage}
             onPageChange={this.handlePageChange}
@@ -60,6 +59,19 @@ class Movies extends Component {
       </div>
     );
   }
+
+  getPageData = (selectedItem, movies, sortColumn, currentPage, pageSize) => {
+    const filters =
+      selectedItem && selectedItem._id
+        ? movies.filter((item) => item.genre._id === selectedItem._id)
+        : movies;
+
+    const sorted = _.orderBy(filters, [sortColumn.path], [sortColumn.order]);
+    const items = paginate(sorted, currentPage, pageSize);
+
+    const count = sorted.length;
+    return { count, items };
+  };
 
   handleSort = (sortColumn) => {
     this.setState({ sortColumn });
