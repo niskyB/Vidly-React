@@ -4,11 +4,15 @@ import {Route, Redirect, Switch} from 'react-router-dom';
 import Customers from './components/customers';
 import Rentals from './components/rentals';
 import NotFound from './components/notFound';
+import NavBar from './components/navBar';
+import React from 'react';
 
 function App() {
   return (
+    <React.Fragment>
+    <NavBar/>
     <main className='container'>
-      <Switch>
+      <Switch>s
       <Route path="/movies" component={Movies}/>
       <Route path="/customers" component={Customers}/>
       <Route path="/rentals" component={Rentals}/>
@@ -17,6 +21,8 @@ function App() {
       <Redirect to="not-found"/>
       </Switch>
     </main>
+    </React.Fragment>
+   
   );
 }
 
