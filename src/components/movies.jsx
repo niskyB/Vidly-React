@@ -44,6 +44,7 @@ class Movies extends Component {
         <div className="col">
           <MoviesTable
             movies={result.items}
+            total={movies.length}
             sortColumn={sortColumn}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
@@ -101,9 +102,13 @@ class Movies extends Component {
   };
 
   handleDelete = (id) => {
-    let movies = this.state.movies;
+    let { movies, currentPage, pageSize } = this.state;
     movies = movies.filter((movie) => movie._id !== id);
-    this.setState({ movies });
+
+    if (movies.length % pageSize === 0) {
+      if (movies.length < currentPage * pageSize) currentPage--;
+    }
+    this.setState({ movies, currentPage });
   };
 }
 

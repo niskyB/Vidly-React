@@ -35,12 +35,11 @@ class MoviesTable extends Component {
     },
   ];
   render() {
-    const { movies, sortColumn, onSort } = this.props;
-    if (movies.length === 0)
-      return <h1>There are no movies in the database.</h1>;
+    const { movies, sortColumn, onSort, total } = this.props;
+    if (total === 0) return <h1>There are no movies in the database.</h1>;
     return (
       <React.Fragment>
-        <h1>There are {movies.length} movies in the database.</h1>
+        <h1>There are {total} movies in the database.</h1>
         <table className="table">
           <TableHeader
             columns={this.columns}
