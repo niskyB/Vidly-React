@@ -7,6 +7,7 @@ import ListGroup from "./common/listGroup";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import SearchBox from "./common/searchBox";
 
 class Movies extends Component {
   state = {
@@ -14,6 +15,8 @@ class Movies extends Component {
     currentPage: 1,
     pageSize: 4,
     genres: [],
+    searchQuery: "",
+    selectedGenre: null,
     sortColumn: { path: "title", order: "asc" },
   };
 
@@ -23,14 +26,22 @@ class Movies extends Component {
   }
 
   render() {
-    const { pageSize, currentPage, movies, genres, selectedItem, sortColumn } =
-      this.state;
+    const {
+      pageSize,
+      currentPage,
+      movies,
+      genres,
+      selectedGenre,
+      sortColumn,
+      searchQuery,
+    } = this.state;
     const result = this.getPageData(
-      selectedItem,
       movies,
       sortColumn,
       currentPage,
-      pageSize
+      pageSize,
+      searchQuery,
+      selectedGenre
     );
 
     return (
@@ -39,7 +50,7 @@ class Movies extends Component {
           <ListGroup
             items={genres}
             onItemSelect={this.handleGenreSelect}
-            selectedItem={selectedItem}
+            selectedItem={selectedGenre}
           />
         </div>
         <div className="col">
@@ -50,6 +61,7 @@ class Movies extends Component {
           >
             New Movie
           </Link>
+          <SearchBox value={searchQuery} onChange={this.handleSearch} />
           <MoviesTable
             movies={result.items}
             total={movies.length}
@@ -69,12 +81,22 @@ class Movies extends Component {
     );
   }
 
-  getPageData = (selectedItem, movies, sortColumn, currentPage, pageSize) => {
-    const filters =
-      selectedItem && selectedItem._id
-        ? movies.filter((item) => item.genre._id === selectedItem._id)
-        : movies;
-
+  getPageData = (
+    movies,
+    sortColumn,
+    currentPage,
+    pageSize,
+    searchQuery,
+    selectedGenre
+  ) => {
+    let filters = movies;
+    console.log("movie", movies);
+    if (searchQuery)
+      filters = movies.filter((m) =>
+        m.title.toLowerCase().startsWith(searchQuery.toLowerCase())
+      );
+    else if (selectedGenre && selectedGenre._id)
+      filters = movies.filter((item) => item.genre._id === selectedGenre._id);
     const sorted = _.orderBy(filters, [sortColumn.path], [sortColumn.order]);
     const items = paginate(sorted, currentPage, pageSize);
 
@@ -87,11 +109,15 @@ class Movies extends Component {
   };
 
   handleGenreSelect = (genre) => {
-    this.setState({ selectedItem: genre, currentPage: 1 });
+    this.setState({ selectedGenre: genre, searchQuery: "", currentPage: 1 });
   };
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
+  };
+
+  handleSearch = (query) => {
+    this.setState({ searchQuery: query, selectedGenre: null, currentPage: 1 });
   };
 
   handleRenderTitle(count) {
